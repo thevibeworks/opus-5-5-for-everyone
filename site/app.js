@@ -1568,10 +1568,169 @@
     measure();
   }
 
+  // ---------- letters: the title streams in like an answer, then reacts to you ----------
+  function letters() {
+    const h1 = $('.post-head h1');
+    const hls = $$('.hl', h1);
+    if (reduceMotion) { h1.classList.add('lt-ready'); hls.forEach((h) => h.classList.add('on')); return; }
+
+    // Split text into word and letter spans; cursor-effect spans and their overlays stay untouched.
+    const split = (root) => {
+      const out = [];
+      const walk = (node) => {
+        for (const child of [...node.childNodes]) {
+          if (child.nodeType === 3) {
+            const frag = document.createDocumentFragment();
+            for (const part of child.textContent.split(/(\s+)/)) {
+              if (!part) continue;
+              if (/^\s+$/.test(part)) { frag.append(part); continue; }
+              const word = document.createElement('span');
+              word.className = 'lt-word';
+              for (const chr of part) {
+                const c = document.createElement('span');
+                c.className = /\d/.test(chr) ? 'lt lt-num' : 'lt';
+                c.textContent = chr;
+                word.append(c);
+                out.push(c);
+              }
+              frag.append(word);
+            }
+            child.replaceWith(frag);
+          } else if (child.nodeType === 1 && !child.matches('[data-cua], .cua-under, .cua-over')) {
+            walk(child);
+          }
+        }
+      };
+      walk(root);
+      return out;
+    };
+    const label = (el) => el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
+
+    // Letters near the pointer lift, swell, lean away and blush; eased toward their targets each frame.
+    const hoverable = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const react = (host, list) => {
+      if (!hoverable || !list.length) return;
+      const cur = new Float32Array(list.length), target = new Float32Array(list.length);
+      let centers = [], raf = 0;
+      const radius = host === h1 ? 130 : 90;
+      const frame = () => {
+        let moving = false;
+        list.forEach((c, i) => {
+          cur[i] += (target[i] - cur[i]) * 0.2;
+          if (Math.abs(target[i] - cur[i]) < 0.003) cur[i] = target[i]; else moving = true;
+          c.style.setProperty('--k', cur[i].toFixed(3));
+        });
+        raf = moving ? requestAnimationFrame(frame) : 0;
+      };
+      const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
+      host.addEventListener('pointerenter', () => {
+        const hr = host.getBoundingClientRect();
+        centers = list.map((c) => { const r = c.getBoundingClientRect(); return [r.left - hr.left + r.width / 2, r.top - hr.top + r.height / 2]; });
+      });
+      host.addEventListener('pointermove', (e) => {
+        const hr = host.getBoundingClientRect();
+        const px = e.clientX - hr.left, py = e.clientY - hr.top;
+        centers.forEach(([x, y], i) => {
+          const k = clamp(1 - Math.hypot(x - px, (y - py) * 1.3) / radius, 0, 1);
+          target[i] = k * k * (3 - 2 * k);
+          list[i].style.setProperty('--dir', x < px ? -1 : 1);
+        });
+        kick();
+      });
+      host.addEventListener('pointerleave', () => { target.fill(0); kick(); });
+    };
+
+    // Clicking a letter sends a ripple outward, like pressing a key.
+    const ripple = (host, list) => host.addEventListener('click', (e) => {
+      const hit = list.indexOf(e.target.closest('.lt'));
+      if (hit < 0) return;
+      list.forEach((c, j) => {
+        c.classList.remove('lt-pop');
+        void c.offsetWidth; // restart the animation
+        c.style.animationDelay = `${Math.abs(j - hit) * 24}ms`;
+        c.classList.add('lt-pop');
+      });
+    });
+    const popDone = (e) => { if (e.animationName === 'lt-pop') { e.target.classList.remove('lt-pop'); e.target.style.animationDelay = ''; } };
+
+    // Title: stream in by "tokens", roll the version digits, then sweep the highlight.
+    label(h1);
+    const chars = split(h1);
+    h1.addEventListener('animationend', popDone);
+    react(h1, chars);
+    ripple(h1, chars);
+    const SPLITS = { interactive: [5, 6], everyone: [5, 3] };
+    const tokens = [];
+    $$('.lt-word', h1).forEach((w) => {
+      const ls = [...w.children], word = w.textContent;
+      if (/\d/.test(word)) ls.forEach((l) => tokens.push([l]));
+      else if (SPLITS[word]) { let at = 0; for (const n of SPLITS[word]) { tokens.push(ls.slice(at, at + n)); at += n; } }
+      else tokens.push(ls);
+    });
+    const onScreen = h1.getBoundingClientRect().bottom > 0 && h1.getBoundingClientRect().top < innerHeight;
+    if (!onScreen) { h1.classList.add('lt-ready'); hls.forEach((h) => h.classList.add('on')); }
+    else {
+      h1.classList.add('lt-intro');
+      chars.forEach((c) => c.classList.add('lt-pending'));
+      h1.classList.add('lt-ready');
+      const roll = (c) => {
+        const final = c.textContent;
+        let n = 0;
+        const t = setInterval(() => {
+          c.textContent = n++ < 11 ? String(Math.floor(Math.random() * 10)) : final;
+          if (n > 11) clearInterval(t);
+        }, 48);
+      };
+      let tip = null;
+      tokens.forEach((tok, i) => setTimeout(() => {
+        tok.forEach((c) => { c.classList.remove('lt-pending'); if (c.classList.contains('lt-num')) roll(c); });
+        if (tip) tip.classList.remove('lt-tip');
+        tip = tok[tok.length - 1];
+        tip.classList.add('lt-tip');
+      }, 160 + i * 90));
+      const end = 160 + tokens.length * 90;
+      hls.forEach((h, i) => setTimeout(() => h.classList.add('on'), end + 220 + i * 320));
+      setTimeout(() => { if (tip) tip.classList.remove('lt-tip'); h1.classList.remove('lt-intro'); }, end + 1700);
+    }
+
+    // Section titles: rise in once when they arrive, then react like the title.
+    const heads = $$('.post h2, .post h3').filter((h) => !h.closest('.hero-demo, .tabpanel, .chat, .pane-card'));
+    // Reveal once a title's top crosses the line, even if a fast scroll already carried it past,
+    // so nothing can stay hidden.
+    const waiting = new Set();
+    const reveal = () => {
+      for (const h of waiting) {
+        if (h.getBoundingClientRect().top > innerHeight * 0.9) continue;
+        waiting.delete(h);
+        h.classList.add('lt-go');
+        setTimeout(() => h.classList.remove('lt-wait', 'lt-go'), 1400);
+      }
+      if (!waiting.size) removeEventListener('scroll', onScroll);
+    };
+    let queued = false;
+    const onScroll = () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; reveal(); }); } };
+    heads.forEach((h) => {
+      label(h);
+      const ls = split(h);
+      ls.forEach((c, i) => c.style.setProperty('--i', i));
+      h.addEventListener('animationend', popDone);
+      react(h, ls);
+      ripple(h, ls);
+      if (h.getBoundingClientRect().top > innerHeight) { h.classList.add('lt-wait'); waiting.add(h); }
+    });
+    if (waiting.size) addEventListener('scroll', onScroll, { passive: true });
+
+    // Brand: a little wave on hover.
+    const brandLetters = split($('.brand-word'));
+    brandLetters.forEach((c, i) => c.style.setProperty('--i', i));
+    $('.brand').addEventListener('animationend', popDone);
+  }
+
   // ---------- boot ----------
   chrome();
   agentCursor();
   vibes();
+  letters();
   $$('[data-tabs]').forEach(tabs);
   const lazy = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) startWidget(e.target); }), { rootMargin: '600px 0px' });
   $$('[data-widget]').forEach((el) => lazy.observe(el));
