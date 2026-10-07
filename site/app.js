@@ -1366,7 +1366,7 @@
       host.classList.add('cua-host');
       const under = layer('cua-under'), over = layer('cua-over');
       const cursor = layer('cua-cursor');
-      cursor.innerHTML = `<span class="cua-ring"></span>${POINTER}${IBEAM}<span class="cua-tag" data-name="Opus 5.5"><span class="cua-verb" data-verb=" · ${VERBS[kind]}"></span></span>`;
+      cursor.innerHTML = `<span class="cua-ring"></span>${POINTER}${IBEAM}<span class="cua-tag" data-name="Opus 5.5"><span class="cua-verb" data-verb=" · ${node.dataset.verb || VERBS[kind]}"></span></span>`;
       over.appendChild(cursor);
       host.append(under, over);
       const it = { kind, host, el, under, over, cursor, ring: $('.cua-ring', cursor), p: -1 };
@@ -1498,9 +1498,80 @@
     update(true);
   }
 
+  // ---------- thevibeworks: Claude Code style spinners and a status line that reads along ----------
+  function vibes() {
+    const FRAMES = ['·', '✢', '✳', '✶', '✻', '✽', '✻', '✶', '✳', '✢'];
+    const spins = $$('[data-spin]');
+    const pill = $('.vibe-status');
+    const verbEl = $('.vs-verb', pill), meta = $('.vs-meta', pill);
+    const glyph = $('.vs-glyph', pill);
+    const SECTIONS = [['top', 'Reading'], ['hero-demo', 'Exploding'], ['interactive-answers', 'Noodling'], ['everyday', 'Planning'],
+      ['learn', 'Pondering'], ['build', 'Tinkering'], ['how-it-works', 'Cogitating'], ['sooner', 'Streaming'], ['safety', 'Sandboxing'],
+      ['about', 'Fact-checking'], ['next', 'Vibing'], ['more', 'Browsing']]
+      .map(([id, v]) => [document.getElementById(id), v]).filter(([el]) => el);
+    const blocks = $$('.post p, .post h1, .post h2, .post h3, .post li, .msg-user')
+      .map((el) => ({ el, words: (el.textContent.match(/\S+/g) || []).length }));
+    const t0 = performance.now();
+    const fmtTok = (n) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n));
+    let tokens = 0, verb = 'Reading', frame = 0, nearTop = true, interrupted = false;
+
+    const set = (el, text) => { if (el.textContent !== text) el.textContent = text; };
+    const render = () => {
+      if (interrupted) { set(verbEl, '⎿ Interrupted by user'); set(meta, '(esc to resume)'); }
+      else {
+        set(verbEl, `${verb}…`);
+        set(meta, `(${Math.floor((performance.now() - t0) / 1000)}s · ↓ ${fmtTok(tokens)} tokens · esc to interrupt)`);
+      }
+      pill.classList.toggle('interrupted', interrupted);
+      if (interrupted) set(glyph, '✻');
+      pill.classList.toggle('show', !nearTop);
+    };
+
+    // tokens "read" = words above the reading line, at roughly 1.3 tokens a word
+    let queued = false;
+    const measure = () => {
+      queued = false;
+      const line = innerHeight * 0.6;
+      let words = 0;
+      for (const b of blocks) if (b.el.offsetParent && b.el.getBoundingClientRect().top < line) words += b.words;
+      tokens = Math.round(words * 1.3);
+      verb = 'Reading';
+      for (const [el, v] of SECTIONS) if (el.getBoundingClientRect().top < line) verb = v;
+      nearTop = scrollY < 420;
+      render();
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(measure); } }, { passive: true });
+    addEventListener('resize', measure);
+
+    // esc really does interrupt it, like the real thing
+    addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || nearTop || getComputedStyle(pill).visibility === 'hidden') return;
+      if (e.target.closest && e.target.closest('input, textarea, select, canvas')) return;
+      interrupted = !interrupted;
+      render();
+    });
+
+    setInterval(() => {
+      if (document.hidden) return;
+      frame = (frame + 1) % FRAMES.length;
+      if (!reduceMotion) {
+        for (const sp of spins) {
+          const mode = sp.dataset.spin;
+          if (mode === 'always' && interrupted) continue;
+          const link = sp.closest('a');
+          const on = mode === 'always' || (link && (link.matches(':hover') || link === document.activeElement));
+          set(sp, on ? FRAMES[frame] : '✻');
+        }
+      }
+      if (!nearTop) render();
+    }, 130);
+    measure();
+  }
+
   // ---------- boot ----------
   chrome();
   agentCursor();
+  vibes();
   $$('[data-tabs]').forEach(tabs);
   const lazy = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) startWidget(e.target); }), { rootMargin: '600px 0px' });
   $$('[data-widget]').forEach((el) => lazy.observe(el));

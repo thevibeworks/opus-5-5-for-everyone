@@ -20,6 +20,8 @@ Every interactive was written by Claude Opus 5.5 in one Claude Code session, as 
 | Build a tool | Bill splitter (cent-exact rounding), savings calculator, brick breaker |
 | Answers that start sooner | Simulated side-by-side: think-then-answer vs answer-while-thinking |
 | Throughout | A scroll-scrubbed "Opus 5.5" cursor that marks, circles, types and drags words in the essay as you read (off with reduced motion) |
+| Top bar | A Claude Code style status line that reads along: spinner, verb per section, seconds, tokens read. Esc really interrupts it |
+| Ending | More from thevibeworks, and a sticker the cursor drags in |
 
 ## Layout
 

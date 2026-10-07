@@ -24,11 +24,16 @@
 <a class="skip" href="#main">Skip to main content</a>
 
 <header class="topbar">
-  <a class="brand" href="#top" aria-label="Back to top">
-    <span class="brand-word">Claude</span>
+  <a class="brand" href="#top" aria-label="thevibeworks, back to top">
+    <span class="brand-glyph" aria-hidden="true">✻</span>
+    <span class="brand-word">thevibeworks</span>
     <span class="brand-tag">concept</span>
   </a>
-  <a class="btn btn-dark" href="https://claude.ai/" target="_blank" rel="noopener">Try Claude <span aria-hidden="true">&#8599;</span></a>
+  <div class="vibe-status" aria-hidden="true"><span class="vs-glyph" data-spin="always">✻</span><span class="vs-verb">Reading…</span><span class="vs-meta"></span></div>
+  <div class="top-actions">
+    <a class="btn btn-ghost top-try" href="https://claude.ai/" target="_blank" rel="noopener">Try Claude <span aria-hidden="true">&#8599;</span></a>
+    <a class="btn btn-gh" href="https://github.com/thevibeworks/opus-5-5-for-everyone" target="_blank" rel="noopener"><svg class="gh-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span class="gh-long">thevibeworks/opus-5-5-for-everyone</span><span class="gh-short">GitHub</span></a>
+  </div>
 </header>
 
 <nav class="toc" aria-label="On this page">
@@ -57,7 +62,7 @@
   </header>
 
   <div class="post-tools">
-    <span class="byline">Written and built by Claude Opus 5.5</span>
+    <span class="byline">Written and built by Claude Opus 5.5 · published by <a href="https://github.com/thevibeworks" target="_blank" rel="noopener">thevibeworks</a></span>
     <button class="share" type="button" data-share>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
       <span data-share-label>Copy link</span>
@@ -326,19 +331,81 @@
 
   <h2 id="about">About this page</h2>
   <p>This is an unofficial concept demo, not an Anthropic announcement. It makes no claims about availability, pricing, user numbers or benchmarks. Its layout follows OpenAI’s <a href="https://openai.com/index/gpt-6-for-everyone/" target="_blank" rel="noopener">“GPT‑6 and Intelligent UI for everyone”</a> (October 7, 2026); all text, illustrations and interactives here are original.</p>
-  <p>Built by Claude Opus 5.5 (<code>claude-opus-5-5</code>) in Claude Code, working with a human collaborator. The source is on <a href="https://github.com/thevibeworks/opus-5-5-for-everyone" target="_blank" rel="noopener">GitHub</a>; the page is served from GitHub Pages.</p>
+  <p>Built by Claude Opus 5.5 (<code>claude-opus-5-5</code>) in Claude Code, running inside a <a href="https://github.com/thevibeworks/deva" target="_blank" rel="noopener">deva</a> container, with a human collaborator at thevibeworks. The source is on <a href="https://github.com/thevibeworks/opus-5-5-for-everyone" target="_blank" rel="noopener">GitHub</a>; the page is served from GitHub Pages.</p>
 
   <h2 id="next">What comes next</h2>
   <p>For decades, using a computer has meant learning someone else’s interface: where the menus are, which screen hides the setting, what the button is called.</p>
   <p>Answers that arrive as interfaces turn that around a little. You describe what you are trying to do, and what comes back is something you can use, shaped around your numbers, your plan and your question.</p>
   <p data-cua="move" data-from="56,40,2">The goal isn’t more UI. It is less distance between understanding something and acting on it.</p>
 
+  <section class="more wide" aria-labelledby="more">
+    <div class="more-head">
+      <h2 id="more">More from thevibeworks</h2>
+      <a class="more-all" href="https://github.com/thevibeworks" target="_blank" rel="noopener">All projects <span aria-hidden="true">&#8599;</span></a>
+    </div>
+    <p class="more-lead">Small, sharp tools for people who live with coding agents.</p>
+    <div class="vw-grid">
+      <a class="vw-card" href="https://github.com/thevibeworks/deva" target="_blank" rel="noopener">
+        <span class="vw-bar" aria-hidden="true"><i></i><i></i><i></i><span>~/thevibeworks/deva</span></span>
+        <span class="vw-body">
+          <span class="vw-name">deva</span>
+          <span class="vw-desc">Run the official Claude Code, Codex, Gemini, Grok and Kimi CLIs at full speed inside Docker. The container is the sandbox; mounts are the contract.</span>
+          <span class="vw-note">This page was built inside one.</span>
+        </span>
+        <span class="vw-spin" aria-hidden="true"><span data-spin="hover">✻</span> Containerizing… <em>(esc to interrupt)</em></span>
+      </a>
+      <a class="vw-card" href="https://github.com/thevibeworks/cctrace" target="_blank" rel="noopener">
+        <span class="vw-bar" aria-hidden="true"><i></i><i></i><i></i><span>~/thevibeworks/cctrace</span></span>
+        <span class="vw-body">
+          <span class="vw-name">cctrace</span>
+          <span class="vw-desc">See exactly what your coding agent does on the wire: a TLS-intercepting tracer with session replay and per-turn cost, cache and latency.</span>
+        </span>
+        <span class="vw-spin" aria-hidden="true"><span data-spin="hover">✻</span> Sniffing packets… <em>(esc to interrupt)</em></span>
+      </a>
+      <a class="vw-card" href="https://github.com/thevibeworks/claude-code-statusline" target="_blank" rel="noopener">
+        <span class="vw-bar" aria-hidden="true"><i></i><i></i><i></i><span>~/thevibeworks/claude-code-statusline</span></span>
+        <span class="vw-body">
+          <span class="vw-name">claude-code-statusline</span>
+          <span class="vw-desc">Live quota, reset countdowns, context usage, model, cost and git activity, right in Claude Code’s status line.</span>
+          <span class="vw-note">This page’s reading status line is a nod to it.</span>
+        </span>
+        <span class="vw-spin" aria-hidden="true"><span data-spin="hover">✻</span> Counting tokens… <em>(esc to interrupt)</em></span>
+      </a>
+      <a class="vw-card" href="https://github.com/thevibeworks/deadman" target="_blank" rel="noopener">
+        <span class="vw-bar" aria-hidden="true"><i></i><i></i><i></i><span>~/thevibeworks/deadman</span></span>
+        <span class="vw-body">
+          <span class="vw-name">deadman</span>
+          <span class="vw-desc">A dead man’s switch for Claude Code: it writes the handoff before your prompt cache dies.</span>
+        </span>
+        <span class="vw-spin" aria-hidden="true"><span data-spin="hover">✻</span> Writing the handoff… <em>(esc to interrupt)</em></span>
+      </a>
+      <a class="vw-card" href="https://github.com/thevibeworks/claude-reads-hn" target="_blank" rel="noopener">
+        <span class="vw-bar" aria-hidden="true"><i></i><i></i><i></i><span>~/thevibeworks/claude-reads-hn</span></span>
+        <span class="vw-body">
+          <span class="vw-name">claude-reads-hn</span>
+          <span class="vw-desc">Claude reads Hacker News four times a day and writes spicy digests.</span>
+        </span>
+        <span class="vw-spin" aria-hidden="true"><span data-spin="hover">✻</span> Reading HN… <em>(esc to interrupt)</em></span>
+      </a>
+      <a class="vw-card" href="https://github.com/thevibeworks/claude-code-docs" target="_blank" rel="noopener">
+        <span class="vw-bar" aria-hidden="true"><i></i><i></i><i></i><span>~/thevibeworks/claude-code-docs</span></span>
+        <span class="vw-body">
+          <span class="vw-name">claude-code-docs</span>
+          <span class="vw-desc">Everything Anthropic ships for builders, archived and updated four times a day: API, Claude Code, MCP, cookbooks, skills.</span>
+        </span>
+        <span class="vw-spin" aria-hidden="true"><span data-spin="hover">✻</span> Archiving… <em>(esc to interrupt)</em></span>
+      </a>
+    </div>
+  </section>
+
+  <p class="sticker-row"><a class="sticker" data-cua="move" data-from="-170,54,-20" data-verb="sticking" href="https://github.com/thevibeworks/opus-5-5-for-everyone" target="_blank" rel="noopener"><span class="sticker-face"><svg class="gh-mark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span class="sticker-text"><b>Star it on GitHub</b><small>thevibeworks/opus-5-5-for-everyone</small></span><span class="sticker-star" aria-hidden="true">★</span></span></a></p>
+
 </article>
 </main>
 
 <footer class="site-foot">
-  <p>Unofficial concept demo. Not affiliated with or endorsed by Anthropic or OpenAI.</p>
-  <p>Built by Claude Opus 5.5 &middot; 2026</p>
+  <p><a class="foot-brand" href="https://github.com/thevibeworks" target="_blank" rel="noopener"><span data-spin="hover" aria-hidden="true">✻</span> thevibeworks</a> · Unofficial concept demo. Not affiliated with or endorsed by Anthropic or OpenAI.</p>
+  <p>Built by Claude Opus 5.5 · <a href="https://github.com/thevibeworks/opus-5-5-for-everyone" target="_blank" rel="noopener">source</a></p>
 </footer>
 </body>
 </html>
