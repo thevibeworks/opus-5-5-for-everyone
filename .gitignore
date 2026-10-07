@@ -1,0 +1,9 @@
+# secrets and local-only files
+.env
+.env.*
+CLAUDE.local.md
+AGENTS.md
+research/
+.wrangler/
+node_modules/
+.DS_Store

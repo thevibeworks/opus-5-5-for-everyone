@@ -1,0 +1,11 @@
+{
+  // Static site served by Workers static assets. Deploy: npx wrangler deploy
+  "name": "opus-5-5-for-everyone",
+  "compatibility_date": "2026-10-06",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "site"
+  }
+}
