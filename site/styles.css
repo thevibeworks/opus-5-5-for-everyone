@@ -459,7 +459,7 @@ svg text { font-family: var(--sans); }
 /* ---------- agent cursor ---------- */
 .post { overflow-x: clip; }
 .cua-host { position: relative; isolation: isolate; }
-.cua-under, .cua-over { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; }
+.cua-under, .cua-over { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; user-select: none; -webkit-user-select: none; }
 .cua-under { z-index: -1; }
 .cua-over { z-index: 3; }
 .cua-bar { position: absolute; background: #f6c9b2; border-radius: .3em .16em .32em .2em; transform-origin: left center; transform: scaleX(0); }
@@ -480,6 +480,8 @@ svg text { font-family: var(--sans); }
 .cua-cursor.typing .cua-ibeam { display: block; left: -15px; top: -15px; }
 .cua-tag { position: absolute; left: 16px; top: 24px; white-space: nowrap; font: 600 11px/1 var(--sans); letter-spacing: .01em; color: #fff; background: var(--clay-ink); padding: 4px 7px 4px; border-radius: 2px 7px 7px 7px; box-shadow: 0 2px 6px rgba(20, 20, 19, .18); }
 .cua-cursor.typing .cua-tag { left: 12px; top: 17px; }
+.cua-tag::before { content: attr(data-name); }
+.cua-verb::before { content: attr(data-verb); }
 .cua-verb { display: none; font-weight: 500; opacity: .85; }
 .cua-cursor.acting .cua-verb { display: inline; }
 .cua-ring { position: absolute; left: -15px; top: -15px; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--clay); opacity: 0; }

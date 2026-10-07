@@ -1366,7 +1366,7 @@
       host.classList.add('cua-host');
       const under = layer('cua-under'), over = layer('cua-over');
       const cursor = layer('cua-cursor');
-      cursor.innerHTML = `<span class="cua-ring"></span>${POINTER}${IBEAM}<span class="cua-tag">Opus 5.5<span class="cua-verb"> · ${VERBS[kind]}</span></span>`;
+      cursor.innerHTML = `<span class="cua-ring"></span>${POINTER}${IBEAM}<span class="cua-tag" data-name="Opus 5.5"><span class="cua-verb" data-verb=" · ${VERBS[kind]}"></span></span>`;
       over.appendChild(cursor);
       host.append(under, over);
       const it = { kind, host, el, under, over, cursor, ring: $('.cua-ring', cursor), p: -1 };
@@ -1378,7 +1378,7 @@
         it.full = el.textContent;
         it.typed = document.createElement('span');
         it.caret = document.createElement('span'); it.caret.className = 'cua-caret';
-        it.rest = document.createElement('span'); it.rest.className = 'cua-rest';
+        it.rest = document.createElement('span'); it.rest.className = 'cua-rest'; it.rest.textContent = it.full;
         el.replaceChildren(it.typed, it.caret, it.rest);
       }
       if (kind === 'circle') { it.svg = svgEl('svg', { class: 'cua-circle' }, over); it.path = svgEl('path', {}, it.svg); }
