@@ -357,9 +357,9 @@ svg text { font-family: var(--sans); }
 /* ---------- TCP ---------- */
 .tcp-chart { display: block; width: 100%; height: auto; }
 .tcp-chart .grid { stroke: var(--line); }
-.tcp-chart .tick { font: 500 10px var(--sans); fill: var(--ink-3); }
+.tcp-chart .tick { font: 500 8.5px var(--sans); fill: var(--ink-3); }
 .tcp-chart .cap { stroke: var(--olive); stroke-dasharray: 6 4; stroke-width: 1.4; }
-.tcp-chart .cap-lbl { font: 600 10.5px var(--sans); fill: var(--olive); }
+.tcp-chart .cap-lbl { font: 600 9px var(--sans); fill: var(--olive); }
 .tcp-chart .cwnd { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
 .tcp-chart .ssth { fill: none; stroke: var(--sky); stroke-width: 1.4; stroke-dasharray: 3 3; }
 .tcp-chart .ss-zone { fill: #e3ecf5; opacity: .7; }
@@ -429,7 +429,7 @@ svg text { font-family: var(--sans); }
 .sv-chart .a-contrib { fill: #d8d4c7; }
 .sv-chart .a-growth { fill: var(--clay); opacity: .85; }
 .sv-chart .grid { stroke: var(--line); }
-.sv-chart .tick { font: 500 10px var(--sans); fill: var(--ink-3); }
+.sv-chart .tick { font: 500 8.5px var(--sans); fill: var(--ink-3); }
 .sv-chart .hover-line { stroke: var(--ink); stroke-width: 1; }
 .sv-chart .hover-box rect { fill: var(--ink); }
 .sv-chart .hover-box text { font: 500 11px var(--sans); fill: #fff; }
@@ -456,6 +456,34 @@ svg text { font-family: var(--sans); }
 .stream-body .first { display: inline-block; font: 600 11.5px/1 var(--sans); color: var(--clay-ink); background: var(--clay-tint); border-radius: 999px; padding: 4px 8px; margin-bottom: 10px; }
 @media (max-width: 860px) { .stream-cols { grid-template-columns: 1fr; } .stream-card { min-height: 0; } }
 
+/* ---------- agent cursor ---------- */
+.post { overflow-x: clip; }
+.cua-host { position: relative; isolation: isolate; }
+.cua-under, .cua-over { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; }
+.cua-under { z-index: -1; }
+.cua-over { z-index: 3; }
+.cua-bar { position: absolute; background: #f6c9b2; border-radius: .3em .16em .32em .2em; transform-origin: left center; transform: scaleX(0); }
+.cua-inline { display: inline-block; max-width: 100%; transition: filter .25s; }
+.cua-inline.cua-lifted { filter: drop-shadow(0 12px 14px rgba(20, 20, 19, .14)); }
+.cua-caret { display: inline-block; width: 2px; height: .82em; margin: 0 -1px; background: var(--clay); vertical-align: -0.06em; opacity: 0; }
+.cua-caret.on { opacity: 1; animation: caret 1s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+.cua-rest { color: transparent; }
+.cua-circle { position: absolute; left: 0; top: 0; width: 1px; height: 1px; overflow: visible; }
+.cua-circle path { fill: none; stroke: var(--clay); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 9999; stroke-dashoffset: 9999; }
+.cua-cursor { position: absolute; left: 0; top: 0; opacity: 0; transform-origin: 0 0; will-change: transform, opacity; }
+.cua-cursor svg { position: absolute; left: -5px; top: -3.1px; width: 30px; height: 30px; filter: drop-shadow(0 2px 3px rgba(20, 20, 19, .28)); }
+.cua-arrow path { fill: var(--ink); stroke: #fff; stroke-width: 1.6; stroke-linejoin: round; }
+.cua-ibeam { display: none; }
+.cua-ibeam path { fill: none; stroke: var(--ink); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.cua-cursor.typing .cua-arrow { display: none; }
+.cua-cursor.typing .cua-ibeam { display: block; left: -15px; top: -15px; }
+.cua-tag { position: absolute; left: 16px; top: 24px; white-space: nowrap; font: 600 11px/1 var(--sans); letter-spacing: .01em; color: #fff; background: var(--clay-ink); padding: 4px 7px 4px; border-radius: 2px 7px 7px 7px; box-shadow: 0 2px 6px rgba(20, 20, 19, .18); }
+.cua-cursor.typing .cua-tag { left: 12px; top: 17px; }
+.cua-verb { display: none; font-weight: 500; opacity: .85; }
+.cua-cursor.acting .cua-verb { display: inline; }
+.cua-ring { position: absolute; left: -15px; top: -15px; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--clay); opacity: 0; }
+
 /* ---------- footer ---------- */
 .site-foot { margin-top: 120px; border-top: 1px solid var(--line); padding: 28px 28px 48px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font: 400 13px/1.4 var(--sans); color: var(--ink-3); }
 .site-foot p { margin: 0; }
@@ -471,6 +499,11 @@ svg text { font-family: var(--sans); }
   .receipt { padding: 20px 16px 26px; }
   .tabs-wrap { justify-content: flex-start; }
   .sv-top { grid-template-columns: 1fr; }
+  .rc-item-row { grid-template-columns: 1fr 64px 22px; gap: 4px; }
+  .rc-item input.rc-name, .rc-item input.rc-price { font-size: 12.5px; padding: 2px 3px; }
+  .kb-label text { font-size: 19px; }
+  .tcp-chart .tick, .sv-chart .tick { font-size: 15px; }
+  .tcp-chart .cap-lbl { font-size: 15px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

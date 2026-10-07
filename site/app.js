@@ -499,7 +499,7 @@
     svgEl('path', { d: 'M258,0 C254,90 262,170 252,230 S236,300 228,320', class: 'river' }, svg);
     svgEl('path', { d: 'M0,130 C28,136 52,148 72,158 S112,230 150,320', class: 'river' }, svg);
     svgEl('text', { x: 264, y: 30, class: 'lbl' }, svg).textContent = 'KAMO RIVER';
-    svgEl('text', { x: 340, y: 300, class: 'lbl' }, svg).textContent = 'HIGASHIYAMA';
+    svgEl('text', { x: 394, y: 250, class: 'lbl', 'text-anchor': 'end' }, svg).textContent = 'HIGASHIYAMA';
     svgEl('text', { x: 82, y: 210, class: 'lbl' }, svg).textContent = 'KATSURA RIVER';
     const st0 = svgEl('g', { class: 'station' }, svg);
     svgEl('rect', { x: PLACES.station.x - 6, y: PLACES.station.y - 4, width: 12, height: 8, rx: 1.5 }, st0);
@@ -1343,8 +1343,164 @@
     io.observe(root);
   };
 
+  // ---------- agent cursor: scroll-scrubbed edits on the article itself ----------
+  // Markup: <span data-cua="highlight|circle|type|move" [data-from="dx,dy,deg"]>…</span>, or data-cua on a <p> to move it whole.
+  function agentCursor() {
+    const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const POINTER = '<svg class="cua-arrow" viewBox="0 0 24 24"><path d="M4 2.5v16.2l4.3-4.1 2.9 6.6 3-1.3-2.9-6.5h6z"/></svg>';
+    const IBEAM = '<svg class="cua-ibeam" viewBox="0 0 24 24"><path d="M8.5 3.5h2.2L12 4.6l1.3-1.1h2.2M12 4.6v14.8M8.5 20.5h2.2l1.3-1.1 1.3 1.1h2.2"/></svg>';
+    const VERBS = { highlight: 'marking', circle: 'circling', type: 'typing', move: 'moving' };
+    // gentle overshoot so dragged text settles instead of stopping dead
+    const backOut = (t) => 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2);
+    const layer = (cls) => { const s = document.createElement('span'); s.className = cls; s.setAttribute('aria-hidden', 'true'); return s; };
+
+    const items = $$('[data-cua]').map((node) => {
+      const kind = node.dataset.cua;
+      const host = node.matches('p, h2, h3') ? node : node.closest('p, h2, h3');
+      let el = node;
+      if (node === host) { // whole block: wrap its content so it can move as one piece
+        el = document.createElement('span');
+        el.append(...host.childNodes);
+        host.appendChild(el);
+      }
+      host.classList.add('cua-host');
+      const under = layer('cua-under'), over = layer('cua-over');
+      const cursor = layer('cua-cursor');
+      cursor.innerHTML = `<span class="cua-ring"></span>${POINTER}${IBEAM}<span class="cua-tag">Opus 5.5<span class="cua-verb"> · ${VERBS[kind]}</span></span>`;
+      over.appendChild(cursor);
+      host.append(under, over);
+      const it = { kind, host, el, under, over, cursor, ring: $('.cua-ring', cursor), p: -1 };
+      if (kind === 'move') {
+        [it.dx, it.dy, it.rot] = (node.dataset.from || '90,28,5').split(',').map(Number);
+        el.classList.add('cua-inline');
+      }
+      if (kind === 'type') {
+        it.full = el.textContent;
+        it.typed = document.createElement('span');
+        it.caret = document.createElement('span'); it.caret.className = 'cua-caret';
+        it.rest = document.createElement('span'); it.rest.className = 'cua-rest';
+        el.replaceChildren(it.typed, it.caret, it.rest);
+      }
+      if (kind === 'circle') { it.svg = svgEl('svg', { class: 'cua-circle' }, over); it.path = svgEl('path', {}, it.svg); }
+      return it;
+    });
+    if (!items.length) return;
+
+    // Text line boxes of an element, relative to its host block.
+    const lines = (it) => {
+      const range = document.createRange();
+      range.selectNodeContents(it.el);
+      const hr = it.host.getBoundingClientRect();
+      return [...range.getClientRects()].filter((r) => r.width > 1).map((r) => ({ x: r.left - hr.left, y: r.top - hr.top, w: r.width, h: r.height }));
+    };
+
+    // Each verb returns where the cursor tip should be for action progress s (0..1).
+    const act = {
+      highlight(it, s) {
+        const ls = lines(it);
+        const bars = it.under.children;
+        while (bars.length < ls.length) it.under.appendChild(layer('cua-bar'));
+        while (bars.length > ls.length) it.under.lastChild.remove();
+        const total = ls.reduce((sum, l) => sum + l.w, 0);
+        let d = s * total, tip = null;
+        ls.forEach((l, i) => {
+          const local = clamp(d / l.w, 0, 1);
+          d -= l.w;
+          const bar = bars[i];
+          bar.style.left = `${l.x - 2}px`; bar.style.top = `${l.y + l.h * 0.12}px`;
+          bar.style.width = `${l.w + 4}px`; bar.style.height = `${l.h * 0.84}px`;
+          bar.style.transform = `scaleX(${local}) rotate(${i % 2 ? 0.3 : -0.4}deg)`;
+          if (!tip && (local < 1 || i === ls.length - 1)) tip = { x: l.x + l.w * local, y: l.y + l.h * 0.78 };
+        });
+        return tip || { x: 0, y: 0 };
+      },
+      type(it, s) {
+        const n = Math.round(s * it.full.length);
+        if (it.typed.textContent.length !== n) { it.typed.textContent = it.full.slice(0, n); it.rest.textContent = it.full.slice(n); }
+        it.caret.classList.toggle('on', s > 0 && s < 1 && it.p < 0.95);
+        const hr = it.host.getBoundingClientRect(), cr = it.caret.getBoundingClientRect();
+        return { x: cr.left - hr.left + 1, y: cr.top - hr.top + cr.height * 0.55 };
+      },
+      circle(it, s) {
+        const l = lines(it)[0];
+        if (!l) return { x: 0, y: 0 };
+        const key = `${l.x}|${l.y}|${l.w}|${l.h}`;
+        if (it.key !== key) { // a hand-drawn loop: slightly wobbly ellipse that overshoots its start
+          it.key = key;
+          const cx = l.x + l.w / 2, cy = l.y + l.h / 2, rx = l.w / 2 + 12, ry = l.h / 2 + 7;
+          const pts = [];
+          for (let i = 0; i <= 72; i++) {
+            const t = -2.4 + (i / 72) * Math.PI * 2.18;
+            const wob = 1 + 0.035 * Math.sin(3 * t + 0.7) + i * 0.0009;
+            pts.push(`${(cx + Math.cos(t) * rx * wob).toFixed(1)},${(cy + Math.sin(t) * ry * wob - i * 0.04).toFixed(1)}`);
+          }
+          it.path.setAttribute('d', `M${pts.join(' L')}`);
+          it.len = it.path.getTotalLength();
+          it.path.style.strokeDasharray = it.len;
+        }
+        it.path.style.strokeDashoffset = it.len * (1 - s);
+        const pt = it.path.getPointAtLength(Math.max(0.01, s * it.len));
+        return { x: pt.x, y: pt.y };
+      },
+      move(it, s, p) {
+        const lh = parseFloat(getComputedStyle(it.host).lineHeight) || 30;
+        const k = s >= 1 ? 0 : 1 - backOut(s);
+        it.el.style.transformOrigin = `6px ${lh * 0.55}px`;
+        it.el.style.transform = k ? `translate(${it.dx * k}px, ${it.dy * k}px) rotate(${it.rot * k}deg)` : '';
+        it.el.classList.toggle('cua-lifted', p > 0.3 && p < 0.88);
+        return { x: it.el.offsetLeft + 6 + it.dx * k, y: it.el.offsetTop + lh * 0.55 + it.dy * k };
+      },
+    };
+
+    const render = (it, p) => {
+      const s = easeInOut(clamp((p - 0.34) / 0.52, 0, 1));
+      const at = act[it.kind](it, s, p); // during the approach s is 0, so `at` is where the action starts
+      const approach = ease(clamp(p / 0.28, 0, 1));
+      const press = clamp((p - 0.28) / 0.06, 0, 1) - clamp((p - 0.86) / 0.06, 0, 1);
+      const leave = clamp((p - 0.92) / 0.08, 0, 1);
+      const vis = clamp(p / 0.08, 0, 1) * (1 - leave);
+      let x = at.x, y = at.y;
+      if (approach < 1) { // curved glide in from the lower left
+        const sx = at.x - 90, sy = at.y + 70, cx = at.x - 100, cy = at.y + 4, t = approach;
+        x = (1 - t) ** 2 * sx + 2 * (1 - t) * t * cx + t * t * at.x;
+        y = (1 - t) ** 2 * sy + 2 * (1 - t) * t * cy + t * t * at.y;
+      }
+      x += leave * 22; y += leave * 16;
+      it.cursor.style.opacity = p > 0 && p < 1 ? vis : 0;
+      it.cursor.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotate(${(24 * (1 - approach)).toFixed(1)}deg) scale(${(1 - 0.14 * press).toFixed(3)})`;
+      it.cursor.classList.toggle('typing', it.kind === 'type' && p > 0.3 && p < 0.92);
+      it.cursor.classList.toggle('acting', press > 0.5);
+      const r = clamp((p - 0.28) / 0.14, 0, 1);
+      it.ring.style.opacity = r > 0 && r < 1 ? (1 - r) * 0.7 : 0;
+      it.ring.style.transform = `scale(${0.3 + r * 1.3})`;
+    };
+
+    let queued = false;
+    const update = (force) => {
+      queued = false;
+      const vh = innerHeight;
+      const maxScroll = document.documentElement.scrollHeight - vh;
+      for (const it of items) {
+        const top = it.host.getBoundingClientRect().top;
+        // 0 when the block enters near the bottom of the screen, 1 once it reaches the middle,
+        // or wherever it stops if the page ends first
+        const start = vh * 0.9;
+        const end = Math.min(start - 120, Math.max(vh * 0.45, top - (maxScroll - scrollY)));
+        const p = reduceMotion ? 1 : clamp((start - top) / (start - end), 0, 1);
+        if (p === it.p && force !== true) continue;
+        it.p = p;
+        render(it, p);
+      }
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', () => update(true));
+    document.fonts?.ready.then(() => update(true));
+    update(true);
+  }
+
   // ---------- boot ----------
   chrome();
+  agentCursor();
   $$('[data-tabs]').forEach(tabs);
   const lazy = new IntersectionObserver((entries) => entries.forEach((e) => { if (e.isIntersecting) startWidget(e.target); }), { rootMargin: '600px 0px' });
   $$('[data-widget]').forEach((el) => lazy.observe(el));

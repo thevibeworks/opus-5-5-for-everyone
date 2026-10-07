@@ -19,6 +19,7 @@ Every interactive was written by Claude Opus 5.5 in one Claude Code session, as 
 | Learn hard ideas | Central limit theorem sampler, consistent-hashing ring, TCP Reno congestion-window sim |
 | Build a tool | Bill splitter (cent-exact rounding), savings calculator, brick breaker |
 | Answers that start sooner | Simulated side-by-side: think-then-answer vs answer-while-thinking |
+| Throughout | A scroll-scrubbed "Opus 5.5" cursor that marks, circles, types and drags words in the essay as you read (off with reduced motion) |
 
 ## Layout
 

@@ -109,12 +109,12 @@
     </div>
   </section>
 
-  <h2 id="interactive-answers">Introducing interactive answers</h2>
+  <h2 id="interactive-answers">Introducing <span data-cua="move" data-from="104,30,6">interactive answers</span></h2>
   <p>An interactive answer is still an answer. It starts with what you need to read, then adds what you need to touch: a diagram you can take apart, a table that recalculates when the numbers change, a checklist that keeps your place.</p>
   <p>The format follows the question. Two options want to sit side by side. A mechanism wants an exploded view. A plan wants a timeline. And when one clear sentence is the best answer, that is what you get.</p>
 
   <h3 id="everyday">Everyday questions, made visual</h3>
-  <p>Plans are easier to follow when you can see how the pieces fit. A training plan can show the weeks building toward race day, two offers can sit side by side with the trade-offs priced in, and a weekend away can show up as a route instead of a wall of text.</p>
+  <p><span data-cua="highlight">Plans are easier to follow when you can see how the pieces fit.</span> A training plan can show the weeks building toward race day, two offers can sit side by side with the trade-offs priced in, and a weekend away can show up as a route instead of a wall of text.</p>
 
   <div class="tabs-wrap wide">
     <div class="tabs" role="tablist" aria-label="Everyday examples" data-tabs>
@@ -215,7 +215,7 @@
     </div>
   </div>
 
-  <h3 id="learn">Learn hard ideas by touching them</h3>
+  <h3 id="learn">Learn hard ideas by <span data-cua="circle">touching</span> them</h3>
   <p>Some ideas only click once you can change an input and watch what happens. Instead of describing a concept, an answer can hand you a small working model of it.</p>
 
   <div class="tabs-wrap wide">
@@ -250,7 +250,7 @@
     </div>
   </div>
 
-  <h3 id="build">Build a tool just by asking</h3>
+  <h3 id="build">Build a tool <span data-cua="move" data-from="-96,26,-5">just by asking</span></h3>
   <p>Sometimes the most useful answer is a tool you can keep using: a bill splitter for tonight’s dinner, a calculator to see how savings could grow, or a small game to play right in the conversation.</p>
 
   <div class="tabs-wrap wide">
@@ -286,10 +286,10 @@
 
   <h2 id="how-it-works">How interactive answers work</h2>
   <p>Behind the idea are three pieces. A shared set of components (tables, sliders, steppers, charts, maps, checklists) gives every answer a familiar look and accessible controls. A streaming renderer lets the interface appear piece by piece while the model is still writing, the same way text does. And a model with the judgment to choose what to show, what to let you change, and when plain text is better.</p>
-  <p>The last piece is the hard one. Drawing a slider is easy; knowing whether a slider earns its place is not. Most questions should still get text. An interface is worth it when it lets you do something a paragraph can’t: compare, adjust, explore, or keep track.</p>
+  <p>The last piece is the hard one. Drawing a slider is easy; knowing whether a slider earns its place is not. <span data-cua="highlight">Most questions should still get text.</span> An interface is worth it when it lets you do something a paragraph can’t: compare, adjust, explore, or keep track.</p>
   <p>This page skips the first two pieces on purpose. There is no component library and no special runtime here, only a few files of plain HTML, CSS and JavaScript that Opus 5.5 wrote in one working session after reading the original post. If a model can build these by hand, the remaining product work is making it fast, consistent and safe at scale.</p>
 
-  <h2 id="sooner">Answers that start sooner</h2>
+  <h2 id="sooner">Answers that start <span data-cua="type">sooner</span></h2>
   <p>Hard questions deserve real thinking, but waiting in silence for it is a poor experience. A better pattern is to start with what is already settled (the short answer, the frame, the first steps) and keep working on the rest while you read.</p>
 
   <div class="wide stream-demo" data-widget="stream">
@@ -319,7 +319,7 @@
 
   <p>The catch is deciding what is safe to commit early. A confident first sentence that later turns out wrong is worse than a short wait, so the early parts of an answer should be the parts least likely to change.</p>
 
-  <h2 id="safety">Keeping generated UI safe</h2>
+  <h2 id="safety">Keeping generated UI <span data-cua="highlight">safe</span></h2>
   <p>Interfaces a model writes on the fly need a tighter box than ordinary web pages. Generated UI should run sandboxed, with no access to your cookies, your accounts or the page around it, and no network access unless you allow it. Anything that acts on your behalf (sending, buying, booking) should ask for a clear confirmation, not hide behind a button in a generated form.</p>
   <p>Honesty matters as much in an interface as in prose. A calculator should show its assumptions, a chart should label what is estimated, and a tool shouldn’t look more certain than the reasoning behind it. That is why the savings calculator states what it assumes, and the speed illustration says its timings are simulated.</p>
   <p>This page holds itself to the same rule. It ships with a strict Content Security Policy, loads no third-party scripts or fonts, sets no cookies, and makes no network requests after it loads.</p>
@@ -331,7 +331,7 @@
   <h2 id="next">What comes next</h2>
   <p>For decades, using a computer has meant learning someone else’s interface: where the menus are, which screen hides the setting, what the button is called.</p>
   <p>Answers that arrive as interfaces turn that around a little. You describe what you are trying to do, and what comes back is something you can use, shaped around your numbers, your plan and your question.</p>
-  <p>The goal isn’t more UI. It is less distance between understanding something and acting on it.</p>
+  <p data-cua="move" data-from="56,40,2">The goal isn’t more UI. It is less distance between understanding something and acting on it.</p>
 
 </article>
 </main>
